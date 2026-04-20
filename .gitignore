@@ -1,0 +1,22 @@
+# datasets
+*.png
+*.jpg
+*.jpeg
+*.csv
+*.mp4
+*.mov
+*.zip
+*.env
+
+# models
+*.h5
+*.dat
+
+# virtual environment
+ear_env/
+venv/
+env/
+
+
+# others
+__pycache__/

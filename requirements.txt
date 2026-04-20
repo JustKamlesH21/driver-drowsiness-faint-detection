@@ -1,0 +1,9 @@
+mediapipe==0.10.9
+opencv-python==4.13.0.90
+numpy==2.2.6
+pandas==2.3.3
+scipy==1.15.3
+geocoder==1.38.1
+twilio==9.10.0
+pygame==2.6.1
+python-dotenv==1.2.2
