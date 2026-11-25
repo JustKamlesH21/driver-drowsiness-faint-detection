@@ -1,72 +1,33 @@
-# Driver Drowsiness & Faint Detection System
+<p align="center">
+  <img src="assets/readme/banner.svg" width="100%" alt="Driver Drowsiness and Faint Detection: a webcam watches the driver and raises an alarm when the eyes stay closed or the head drops, and sends an SMS after twelve seconds.">
+</p>
 
-A Windows-based real-time webcam monitoring system that detects driver drowsiness and fainting using MediaPipe Face Mesh, eye aspect ratio (EAR), head pose, and audio/SMS alerting.
+<p align="center">
+  <img src="https://img.shields.io/badge/python-3.10-3A5BA0?style=flat-square" alt="Python 3.10">
+  <img src="https://img.shields.io/badge/platform-Windows-45692A?style=flat-square" alt="Windows">
+  <img src="https://img.shields.io/github/last-commit/JustKamlesH21/driver-drowsiness-faint-detection?style=flat-square&color=E4572E" alt="Last commit">
+</p>
 
-## 🚀 Project Overview
+A drowsy driver and a fainting driver look alike to a camera: eyes shut, head falling. This prototype watches the driver's face through a webcam and tells them apart by how long it lasts. A short closure gets an on-screen warning, a longer one sounds an alarm, and twelve seconds of closed eyes (or a collapsed head posture) also sends an emergency SMS through Twilio. It calibrates to each driver's own open-eye level first, so people with naturally narrow eyes don't trigger false alarms.
 
-This repository includes a working prototype for detecting unsafe driver states such as:
-- `DROWSY WARNING`
-- `SLEEP` / partial fainting
-- `FAINT (UNCONSCIOUS)`
+<p align="center">
+  <img src="assets/readme/proof.svg" width="100%" alt="Thresholds: eyes closed 1.5 seconds gives a drowsy warning, 5.5 seconds an alarm, 12 seconds or a head collapse an alarm plus SMS.">
+</p>
 
-The system uses:
-- `MediaPipe` face mesh for landmark detection
-- `OpenCV` for video capture and overlay rendering
-- `NumPy` / `SciPy` for numeric and geometric calculations
-- `pygame` or `winsound` for local audible alarms
-- `Twilio` for optional SMS emergency notifications
-- `geocoder` for optional location lookup
-- `.env` configuration for safely storing API credentials
+## Quick start
 
-## 📁 Key Files
-
-- `main.py` - primary application with dynamic calibration, real-time drowsiness/faint detection, audio alarm, and optional SMS alerting.
-- `drowsiness_system.py` - earlier version / alternative faint detection script with head pose calibration and event logging.
-- `log.csv` - runtime output log file created by `main.py`.
-- `faint_drowsiness_log.csv` - output produced by `drowsiness_system.py`.
-- `ear_env/` - local Python virtual environment included in this workspace.
-- `face_landmarker.task` - MediaPipe task file (project asset).
-- `run.txt` - activation instructions and notes.
-
-## ✅ Requirements
-
-This project has been tested on Windows with Python `3.10`.
-
-Install dependencies with:
-
-```bash
-python -m pip install -r requirements.txt
-```
-
-### Included requirements
-
-- `mediapipe==0.10.9`
-- `opencv-python==4.13.0.90`
-- `numpy==2.2.6`
-- `pandas==2.3.3`
-- `scipy==1.15.3`
-- `geocoder==1.38.1`
-- `twilio==9.10.0`
-- `pygame==2.6.1`
-- `python-dotenv==1.2.2`
-
-## ⚙️ Setup Instructions
-
-1. Open a terminal in the project root folder.
-2. Activate the Python virtual environment if you want to use the provided one:
+Tested on Windows with Python 3.10.
 
 ```powershell
-.\ear_env\Scripts\activate
-```
-
-3. Install required packages:
-
-```powershell
-python -m pip install --upgrade pip
+git clone https://github.com/JustKamlesH21/driver-drowsiness-faint-detection.git
+cd driver-drowsiness-faint-detection
 python -m pip install -r requirements.txt
+python main.py
 ```
 
-4. Create a `.env` file in the repository root with the following keys:
+Sit still and look at the camera for the first few seconds while the yellow calibration bar fills. Press `q` in the video window to quit.
+
+SMS alerts are optional. To turn them on, create a `.env` file:
 
 ```dotenv
 ACCOUNT_SID=your_twilio_account_sid
@@ -74,84 +35,48 @@ AUTH_TOKEN=your_twilio_auth_token
 TWILO_PHONE=+1234567890
 ```
 
-> If Twilio credentials are missing or invalid, SMS alerting will be disabled automatically and the system will continue using local audio alerts.
+Then set the destination number in `TO_PHONE` near the top of `main.py`. Without valid keys the app prints `SMS disabled` and keeps running with sound alarms only.
 
-5. Ensure `alarm.wav` exists in the project root for the `pygame` sound alarm. If not, `winsound.Beep` will be used as fallback.
+## How it works
 
-## ▶️ Running the System
+<p align="center">
+  <img src="assets/readme/how-it-works.svg" width="100%" alt="How it works: webcam, calibrate to your open eyes and head position, MediaPipe Face Mesh landmarks, timers on eye closure and head pose, then alarm, SMS and log.csv.">
+</p>
 
-Launch the main detection system with:
+1. **Calibrate.** For the first 60 frames it records your head pitch and roll and your open-eye *eye aspect ratio* (EAR, how open the eyelids are). Your closed-eye limit becomes 80% of your open value, kept between 0.16 and 0.28.
+2. **Measure.** MediaPipe Face Mesh finds the eye and face landmarks in every frame. From them it computes EAR for both eyes and the head's pitch and roll.
+3. **Decide.** Two checks run side by side:
 
-```powershell
-python main.py
-```
+   | Check | Trigger | Result |
+   |---|---|---|
+   | Eyes closed | 1.5 s | `DROWSY WARNING` on screen |
+   | Eyes closed | 5.5 s | `Partially FAINT (SLEEP)`, alarm |
+   | Eyes closed | 12 s | `FAINT (UNCONSCIOUS)`, alarm and one SMS |
+   | Head posture | more than 15° down, 20° up or 25° tilted, for more than 8 frames in a row | `FAINT (POSTURE COLLAPSE)`, alarm and one SMS |
 
-- Press `q` inside the OpenCV window to quit.
-- The system uses camera index `0` by default.
+4. **Alert and log.** The alarm plays `alarm.wav` through pygame, or a `winsound` beep if the file is missing. Each new alert is written to `log.csv`.
 
-## 🧠 How It Works
+All thresholds are constants at the top of `main.py` (`TIME_TIER_*`, `LIMIT_PITCH_*`, `LIMIT_ROLL`).
 
-### `main.py`
+## Files
 
-- Detects face landmarks using MediaPipe Face Mesh.
-- Uses eye aspect ratio (EAR) to measure blink/eye closure.
-- Computes head pose to detect pitch/roll and faint-like postures.
-- Calibrates for each user during startup to set safe head and EAR thresholds.
-- Sends emergency SMS via Twilio for severe events.
-- Logs events to `log.csv`.
+| File | What it is |
+|---|---|
+| `main.py` | The current system: calibration, three tiers, posture check, alarm, SMS |
+| `drowsiness_system.py` | An earlier, simpler version that logs to `faint_drowsiness_log.csv` |
+| `face_landmarker.task` | MediaPipe model file |
+| `v0.01/` | The first attempt, with Haar cascades |
 
-### `drowsiness_system.py`
+## Limits
 
-- A simpler fallback detection script.
-- Uses calibration steps to set straight and downward head pose.
-- Emits alerts when eyes close or head drops past a trigger.
-- Saves results into `faint_drowsiness_log.csv`.
+- This is a prototype, not a certified safety device.
+- Windows only as written: the fallback alarm uses `winsound`.
+- The SMS carries a maps link. With `USE_EXACT_LOCATION = True` (the default) it uses the fixed `DEMO_LAT`/`DEMO_LNG` in `main.py`; set it to `False` to use an IP-based location from `geocoder`.
 
-## 🎯 Detection Thresholds
+## License
 
-The main system uses the following built-in threshold values in `main.py`:
+No license file has been added yet, so default copyright applies.
 
-- `TIME_TIER_1_DROWSY = 1.5` seconds
-- `TIME_TIER_2_SLEEP = 5.5` seconds
-- `TIME_TIER_3_FAINT = 12.0` seconds
-- `LIMIT_PITCH_DOWN = 15.0` degrees
-- `LIMIT_PITCH_UP = 20.0` degrees
-- `LIMIT_ROLL = 25.0` degrees
-- `EAR_THRESHOLD_DYNAMIC` is calibrated automatically during startup with a fallback default of `0.22`
-
-## 📝 Customization
-
-You can fine-tune detection behavior in `main.py` by editing constants:
-
-- `TIME_TIER_1_DROWSY`
-- `TIME_TIER_2_SLEEP`
-- `TIME_TIER_3_FAINT`
-- `LIMIT_PITCH_DOWN`
-- `LIMIT_PITCH_UP`
-- `LIMIT_ROLL`
-- `USE_EXACT_LOCATION`
-- `DEMO_LAT` / `DEMO_LNG`
-
-## 📌 Notes
-
-- `winsound` is used as a fallback alarm on Windows when `alarm.wav` is missing.
-- If no face is found, the system displays `NO FACE DETECTED`.
-- The first few seconds are reserved for warm-up and calibration.
-
-## 💡 Recommended Improvements
-
-If you want to extend the project, consider adding:
-- a GUI for configuration and status display
-- support for multiple camera devices
-- safety zone overlay and driver ID authentication
-- cloud-based alert logging or remote dashboard
-
-## 📞 Troubleshooting
-
-- If the webcam does not initialize, verify camera permissions and that no other app is using the camera.
-- If `mediapipe` fails to import, reinstall with `pip install mediapipe==0.10.9`.
-- If SMS is not sent, confirm Twilio credentials and check the `TO_PHONE` destination number.
-
----
-
-Thank you for using this drowsiness/faint detection system. Stay safe and feel free to extend it further with custom alerting, logging, or driver-monitoring features.
+<p align="center">
+  <a href="https://github.com/JustKamlesH21"><img src="assets/readme/footer.svg" width="100%" alt="Part of Kamlesh OS. More projects on github.com/JustKamlesH21"></a>
+</p>
