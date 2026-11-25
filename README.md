@@ -1,5 +1,5 @@
 <p align="center">
-  <picture><source media="(max-width: 767px)" srcset="assets/readme/banner-m.svg"><img src="assets/readme/banner.svg" width="100%" alt="Driver Drowsiness and Faint Detection: a webcam watches the driver and raises an alarm when the eyes stay closed or the head drops, and sends an SMS after twelve seconds."></picture>
+  <picture><source media="(max-width: 767px)" srcset="assets/readme/banner-m.png"><img src="assets/readme/banner.svg" width="100%" alt="Driver Drowsiness and Faint Detection: a webcam watches the driver and raises an alarm when the eyes stay closed or the head drops, and sends an SMS after twelve seconds."></picture>
 </p>
 
 <p align="center">
@@ -11,11 +11,11 @@
 A drowsy driver and a fainting driver look alike to a camera: eyes shut, head falling. This prototype watches the driver's face through a webcam and tells them apart by how long it lasts. A short closure gets an on-screen warning, a longer one sounds an alarm, and twelve seconds of closed eyes (or a collapsed head posture) also sends an emergency SMS through Twilio. It calibrates to each driver's own open-eye level first, so people with naturally narrow eyes don't trigger false alarms.
 
 <p align="center">
-  <picture><source media="(max-width: 767px)" srcset="assets/readme/proof-m.svg"><img src="assets/readme/proof.svg" width="100%" alt="Thresholds: eyes closed 1.5 seconds gives a drowsy warning, 5.5 seconds an alarm, 12 seconds or a head collapse an alarm plus SMS."></picture>
+  <picture><source media="(max-width: 767px)" srcset="assets/readme/proof-m.png"><img src="assets/readme/proof.svg" width="100%" alt="Thresholds: eyes closed 1.5 seconds gives a drowsy warning, 5.5 seconds an alarm, 12 seconds or a head collapse an alarm plus SMS."></picture>
 </p>
 
 <p align="center">
-  <picture><source media="(max-width: 767px)" srcset="assets/readme/glance-m.svg"><img src="assets/readme/glance.svg" width="100%" alt="At a glance. Built: Apr 2026; Stack: MediaPipe · OpenCV · Twilio; Status: Windows prototype"></picture>
+  <picture><source media="(max-width: 767px)" srcset="assets/readme/glance-m.png"><img src="assets/readme/glance.svg" width="100%" alt="At a glance. Built: Apr 2026; Stack: MediaPipe · OpenCV · Twilio; Status: Windows prototype"></picture>
 </p>
 
 ## Quick start
@@ -44,7 +44,7 @@ Then set the destination number in `TO_PHONE` near the top of `main.py`. Without
 ## How it works
 
 <p align="center">
-  <picture><source media="(max-width: 767px)" srcset="assets/readme/how-it-works-m.svg"><img src="assets/readme/how-it-works.svg" width="100%" alt="How it works: webcam, calibrate to your open eyes and head position, MediaPipe Face Mesh landmarks, timers on eye closure and head pose, then alarm, SMS and log.csv."></picture>
+  <picture><source media="(max-width: 767px)" srcset="assets/readme/how-it-works-m.png"><img src="assets/readme/how-it-works.svg" width="100%" alt="How it works: webcam, calibrate to your open eyes and head position, MediaPipe Face Mesh landmarks, timers on eye closure and head pose, then alarm, SMS and log.csv."></picture>
 </p>
 
 1. **Calibrate.** For the first 60 frames it records your head pitch and roll and your open-eye *eye aspect ratio* (EAR, how open the eyelids are). Your closed-eye limit becomes 80% of your open value, kept between 0.16 and 0.28.
@@ -65,7 +65,7 @@ All thresholds are constants at the top of `main.py` (`TIME_TIER_*`, `LIMIT_PITC
 ## Architecture
 
 <p align="center">
-  <picture><source media="(max-width: 767px)" srcset="assets/readme/architecture-m.svg"><img src="assets/readme/architecture.svg" width="100%" alt="Architecture. camera: Webcam; vision: Face Mesh, EAR + head pose; logic · main.py: Calibration, 3 tiers + posture; alerts: Alarm, SMS, log.csv"></picture>
+  <picture><source media="(max-width: 767px)" srcset="assets/readme/architecture-m.png"><img src="assets/readme/architecture.svg" width="100%" alt="Architecture. camera: Webcam; vision: Face Mesh, EAR + head pose; logic · main.py: Calibration, 3 tiers + posture; alerts: Alarm, SMS, log.csv"></picture>
 </p>
 
 ## Files
@@ -88,5 +88,5 @@ All thresholds are constants at the top of `main.py` (`TIME_TIER_*`, `LIMIT_PITC
 No license file has been added yet, so default copyright applies.
 
 <p align="center">
-  <a href="https://github.com/JustKamlesH21"><picture><source media="(max-width: 767px)" srcset="assets/readme/footer-m.svg"><img src="assets/readme/footer.svg" width="100%" alt="Part of Kamlesh OS. More projects on github.com/JustKamlesH21"></picture></a>
+  <a href="https://github.com/JustKamlesH21"><picture><source media="(max-width: 767px)" srcset="assets/readme/footer-m.png"><img src="assets/readme/footer.svg" width="100%" alt="Part of Kamlesh OS. More projects on github.com/JustKamlesH21"></picture></a>
 </p>
