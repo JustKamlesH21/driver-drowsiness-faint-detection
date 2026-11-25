@@ -14,6 +14,10 @@ A drowsy driver and a fainting driver look alike to a camera: eyes shut, head fa
   <picture><source media="(max-width: 767px)" srcset="assets/readme/proof-m.svg"><img src="assets/readme/proof.svg" width="100%" alt="Thresholds: eyes closed 1.5 seconds gives a drowsy warning, 5.5 seconds an alarm, 12 seconds or a head collapse an alarm plus SMS."></picture>
 </p>
 
+<p align="center">
+  <picture><source media="(max-width: 767px)" srcset="assets/readme/glance-m.svg"><img src="assets/readme/glance.svg" width="100%" alt="At a glance. Built: Apr 2026; Stack: MediaPipe · OpenCV · Twilio; Status: Windows prototype"></picture>
+</p>
+
 ## Quick start
 
 Tested on Windows with Python 3.10.
