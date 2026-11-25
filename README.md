@@ -58,6 +58,12 @@ Then set the destination number in `TO_PHONE` near the top of `main.py`. Without
 
 All thresholds are constants at the top of `main.py` (`TIME_TIER_*`, `LIMIT_PITCH_*`, `LIMIT_ROLL`).
 
+## Architecture
+
+<p align="center">
+  <picture><source media="(max-width: 767px)" srcset="assets/readme/architecture-m.svg"><img src="assets/readme/architecture.svg" width="100%" alt="Architecture. camera: Webcam; vision: Face Mesh, EAR + head pose; logic · main.py: Calibration, 3 tiers + posture; alerts: Alarm, SMS, log.csv"></picture>
+</p>
+
 ## Files
 
 | File | What it is |
